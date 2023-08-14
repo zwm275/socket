@@ -13,7 +13,15 @@
       <a-form-item
         label="用户名"
         name="username"
-        :rules="[{ required: true, message: '请输入用户名' }]"
+        :rules="[
+          { required: true, message: '请输入用户名', trigger: 'change' },
+          {
+            min: 3,
+            max: 12,
+            message: '长度应为3-12',
+            trigger: 'blur',
+          },
+        ]"
       >
         <a-input v-model:value="formState.username" />
       </a-form-item>
@@ -21,13 +29,17 @@
       <a-form-item
         label="密码"
         name="password"
-        :rules="[{ required: true, message: '请输入密码!' }]"
+        :rules="[
+          { required: true, message: '请输入密码', trigger: 'change' },
+          {
+            min: 5,
+            max: 12,
+            message: '长度应为5-12',
+            trigger: 'blur',
+          },
+        ]"
       >
         <a-input-password v-model:value="formState.password" />
-      </a-form-item>
-
-      <a-form-item name="remember" :wrapper-col="{ offset: 10, span: 16 }">
-        <a-checkbox v-model:checked="formState.remember">记住我</a-checkbox>
       </a-form-item>
 
       <a-form-item :wrapper-col="{ offset: 10, span: 16 }">
@@ -40,30 +52,44 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
 import { reactive } from "vue";
+import { socket } from "@/socket";
+import { message } from "ant-design-vue";
 const router = useRouter();
 
 interface FormState {
   username: string;
   password: string;
-  remember: boolean;
 }
 
 const formState = reactive<FormState>({
   username: "",
   password: "",
-  remember: true,
 });
-
+// 登录按钮
+// 成功的回调
 const onFinish = (values: any) => {
-  console.log("Success:", values);
+  // console.log("Success:", values);
+  socket.emit("signIn", values);
 };
-
+// 失败的回调
 const onFinishFailed = (errorInfo: any) => {
-  console.log("Failed:", errorInfo);
+  // console.log("Failed:", errorInfo);
 };
+// 服务器回复
+socket.on("signInReply", (data) => {
+  if (data.state) {
+    goMain();
+    return message.success(data.msg);
+  }
+  return message.error(data.msg);
+});
 // 去注册
 const goSignUp = () => {
   router.push({ path: "/login/signup" });
+};
+// 去首页
+const goMain = () => {
+  router.push({ path: "/main" });
 };
 </script>
 <style lang="scss" scoped>
@@ -76,7 +102,7 @@ const goSignUp = () => {
     text-align: center;
   }
   .ant-form {
-    width: 50%;
+    width: 30%;
   }
 }
 </style>

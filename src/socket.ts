@@ -12,7 +12,8 @@ export const state = reactive({
 //   process.env.NODE_ENV === "production" ? undefined : "http://localhost:3000";
 const URL = "http://localhost:3000";
 
-export const socket = io(URL, { query: { name: "wang" } });
+export const socket = io(URL);
+// export const socket = io(URL, { query: { name: "wang" } });
 
 socket.on("connect", () => {
   state.connected = true;
