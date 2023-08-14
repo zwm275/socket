@@ -1,16 +1,17 @@
-import "./assets/reset.scss";
+import "ant-design-vue/dist/reset.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-
-import naive from "naive-ui";
+import Antd from "ant-design-vue";
 
 import App from "./App.vue";
 import router from "./router";
+// 路由守卫
+import "./router/permisstion";
 
 const app = createApp(App);
 
-app.use(naive);
+app.use(Antd);
 app.use(createPinia());
 app.use(router);
 

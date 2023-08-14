@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      redirect: "/test",
+      redirect: "/login/signin",
     },
     {
       path: "/main",
@@ -14,11 +14,11 @@ const router = createRouter({
       children: [
         {
           path: "chat",
-          component: () => import("@/views/chatView.vue"),
+          component: () => import("../views/chatView.vue"),
         },
         {
           path: "person",
-          component: () => import("@/views/personView.vue"),
+          component: () => import("../views/personView.vue"),
         },
       ],
     },
@@ -26,6 +26,16 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: () => import("../components/login.vue"),
+      children: [
+        {
+          path: "signin",
+          component: () => import("../views/login/signIn.vue"),
+        },
+        {
+          path: "signup",
+          component: () => import("../views/login/signUp.vue"),
+        },
+      ],
     },
     {
       path: "/test",
