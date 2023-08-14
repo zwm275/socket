@@ -27,19 +27,7 @@
         <a-input v-model:value="formState.username" />
       </a-form-item>
 
-      <a-form-item
-        label="密码"
-        name="password"
-        :rules="[
-          { required: true, message: '请输入密码', trigger: 'change' },
-          {
-            min: 5,
-            max: 12,
-            message: '长度应为5-12',
-            trigger: 'blur',
-          },
-        ]"
-      >
+      <a-form-item label="密码" name="password">
         <a-input-password v-model:value="formState.password" />
       </a-form-item>
 
@@ -82,6 +70,8 @@
 import { useRouter } from "vue-router";
 import { reactive } from "vue";
 import type { Rule } from "ant-design-vue/es/form";
+import { socket } from "@/socket";
+import { message } from "ant-design-vue";
 const router = useRouter();
 
 interface FormState {
@@ -99,26 +89,45 @@ const formState = reactive<FormState>({
   email: "",
   code: "",
 });
-const onFinish = (values: any) => {
-  console.log("Success:", values);
-};
 
-const onFinishFailed = (errorInfo: any) => {
-  console.log("Failed:", errorInfo);
-};
 // 规则
-let validatePass2 = async (_rule: Rule, value: string) => {
+let validatePass = async (_rule: Rule, value: string) => {
   if (value === "") {
     return Promise.reject("请确认密码");
-  } else if (value !== formState.password) {
+  } else if (formState.password !== formState.password2) {
     return Promise.reject("两次密码不一致");
   } else {
     return Promise.resolve();
   }
 };
 const rules: Record<string, Rule[]> = {
-  password2: [{ required: true, validator: validatePass2, trigger: "change" }],
+  password2: [{ required: true, validator: validatePass, trigger: "change" }],
+  password: [
+    { required: true, validator: validatePass, trigger: "change" },
+    {
+      min: 5,
+      max: 12,
+      message: "长度应为5-12",
+      trigger: "blur",
+    },
+  ],
 };
+// 注册
+const onFinish = (values: any) => {
+  // console.log("Success:", values);
+  socket.emit("signUp", values);
+};
+const onFinishFailed = (errorInfo: any) => {
+  // console.log("Failed:", errorInfo);
+};
+// 服务器回复
+socket.on("signUpReply", (data) => {
+  if (data.state) {
+    goSignIn();
+    return message.success(data.msg + "，为您跳转至登录界面");
+  }
+  return message.error(data.msg);
+});
 
 // 去登录
 const goSignIn = () => {
@@ -135,7 +144,7 @@ const goSignIn = () => {
     text-align: center;
   }
   .ant-form {
-    width: 50%;
+    width: 30%;
   }
 }
 </style>
