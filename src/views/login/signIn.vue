@@ -54,6 +54,9 @@ import { useRouter } from "vue-router";
 import { reactive } from "vue";
 import { socket } from "@/socket";
 import { message } from "ant-design-vue";
+import { useCounterStore } from "@/stores/counter";
+const counterStore = useCounterStore();
+
 const router = useRouter();
 
 interface FormState {
@@ -78,6 +81,8 @@ const onFinishFailed = (errorInfo: any) => {
 // 服务器回复
 socket.on("signInReply", (data) => {
   if (data.state) {
+    counterStore.username = formState.username;
+    localStorage.setItem("username", formState.username);
     goMain();
     return message.success(data.msg);
   }

@@ -2,11 +2,11 @@
   <div class="chatcontainar">
     <div class="left">
       <ul>
-        <li>
+        <li @click="goChat('publicChatRoom')">
           <div class="content">
             <div class="img"></div>
             <div class="detail">
-              <span>张三</span>
+              <span>公共聊天室</span>
               <p>你好，很高兴认识你</p>
             </div>
           </div>
@@ -31,11 +31,23 @@
         </li>
       </ul>
     </div>
-    <div class="right">chat</div>
+    <div class="right"><RouterView></RouterView></div>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const goChat = (type: string) => {
+  router.push({
+    path: "/main/chat/detail",
+    query: {
+      type,
+    },
+  });
+};
+</script>
 
 <style lang="scss" scoped>
 .chatcontainar {
@@ -44,10 +56,10 @@
   .left {
     height: 100%;
     ul {
+      list-style-type: none;
       display: inline-block;
       margin-left: 30px;
       li {
-        // background-color: skyblue;
         margin-bottom: 10px;
         .content {
           display: flex;
@@ -84,6 +96,8 @@
   }
   .right {
     margin-left: 20px;
+    width: 100%;
+    height: 80vh;
   }
 }
 </style>

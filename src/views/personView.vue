@@ -41,11 +41,13 @@
   .left {
     height: 100%;
     ul {
+      list-style-type: none;
       display: inline-block;
       margin-left: 30px;
       li {
         // background-color: skyblue;
         margin-bottom: 10px;
+        height: 52px;
         .content {
           display: flex;
           justify-content: start;
@@ -60,6 +62,7 @@
             margin-left: 10px;
             width: 200px;
             span {
+              transform: translateY(-50%);
               line-height: 20px;
               font-weight: 600;
             }
